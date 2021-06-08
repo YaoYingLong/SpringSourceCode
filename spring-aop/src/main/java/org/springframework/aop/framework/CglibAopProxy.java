@@ -160,7 +160,7 @@ class CglibAopProxy implements AopProxy, Serializable {
 		if (logger.isTraceEnabled()) {
 			logger.trace("Creating CGLIB proxy: " + this.advised.getTargetSource());
 		}
-
+		// 从advised中取得在IoC容器中配置的target对象
 		try {
 			Class<?> rootClass = this.advised.getTargetClass();
 			Assert.state(rootClass != null, "Target class must be available for creating a CGLIB proxy");
@@ -178,6 +178,8 @@ class CglibAopProxy implements AopProxy, Serializable {
 			validateClassIfNecessary(proxySuperClass, classLoader);
 
 			// Configure CGLIB Enhancer...
+			// 验证代理对象的接口设置
+			// 创建并配置CGLib的Enhancer，该Enhancer对象是CGLib的主要操作类
 			Enhancer enhancer = createEnhancer();
 			if (classLoader != null) {
 				enhancer.setClassLoader(classLoader);

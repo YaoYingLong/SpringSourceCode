@@ -48,6 +48,11 @@ import org.springframework.aop.SpringProxy;
 public class DefaultAopProxyFactory implements AopProxyFactory, Serializable {
 
 	/**
+	 * 在DefaultAopProxyFactory创建AopProxy的过程中，对不同的AopProxy代理对象的生成涉及的生成策略和场景做了相应的设计。
+	 * 对于具体的AopProxy代理对象的额生成，最终并没有由DefaultAopProxyFactory来完成，而是通过JdkDynamicAopProxy、ObjenesisCglibAopProxy
+	 */
+
+	/**
 	 * Whether this environment lives within a native image.
 	 * Exposed as a private static field rather than in a {@code NativeImageDetector.inNativeImage()} static method due to https://github.com/oracle/graal/issues/2594.
 	 * @see <a href="https://github.com/oracle/graal/blob/master/sdk/src/org.graalvm.nativeimage/src/org/graalvm/nativeimage/ImageInfo.java">ImageInfo.java</a>
@@ -64,9 +69,11 @@ public class DefaultAopProxyFactory implements AopProxyFactory, Serializable {
 				throw new AopConfigException("TargetSource cannot determine target class: " +
 						"Either an interface or a target is required for proxy creation.");
 			}
+			// 如果目标对象是接口类，使用JDK来生成代理对象
 			if (targetClass.isInterface() || Proxy.isProxyClass(targetClass)) {
 				return new JdkDynamicAopProxy(config);
 			}
+			// 否则使用Cglib来生成目标对象的代理对象
 			return new ObjenesisCglibAopProxy(config);
 		}
 		else {
